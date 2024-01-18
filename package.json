@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "console.table": "^0.10.0",
     "inquirer": "^8.2.4",
     "mysql2": "^3.7.0"
   },
@@ -7,7 +8,6 @@
   "description": "A content management system that allows users to easily view and interact with information stored in our database.  This is a command-line application built from scratch to manage a company's employee database, using Node.js, Inquirer, and MySQL.",
   "version": "1.0.0",
   "main": "app.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
