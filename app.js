@@ -161,7 +161,60 @@ async function handleUserPrompts() {
                         break;
                     case 'Add Employee':
                         // Call a function to add an employee
+                        let addEmployeeFlag = true;
 
+                        while (addEmployeeFlag) {
+
+                            const roleChoices = await performQuery('SELECT id, title FROM role');
+                            const roleNames = roleChoices.map(role => role.title);
+
+                            const managerChoices = await performQuery('SELECT id, first_name, last_name FROM employees');
+                            const managerNames = managerChoices.map(manager => manager.first_name + ' ' + manager.last_name);
+
+
+                            const employeeAnswers = await inquirer.prompt([
+                                {
+                                    type: 'input',
+                                    name: 'firstName',
+                                    message: 'What is the employee\'s first name?'
+                                },
+                                {
+                                    type: 'input',
+                                    name: 'lastName',
+                                    message: 'What is the employee\'s last name?'
+                                },
+                                {
+                                    type: 'list',
+                                    name: 'selectedRole',
+                                    message: 'What is the employee\'s role?',
+                                    choices: roleNames
+                                },
+                                {
+                                    type: 'list',
+                                    name: 'selectedManager',
+                                    message: 'Who is the employee\'s manager?',
+                                    choices: managerNames
+                                }
+                            ]);
+
+                            const { firstName, lastName, selectedRole, selectedManager } = employeeAnswers;
+
+
+                            // Find the corresponding role ID based on the selected role name
+                            const selectedRoleId = roleChoices.find(role => role.title === selectedRole).id;
+                            // Find the corresponding manager ID based on the selected manager name
+                            const selectedManagerId = managerChoices.find(manager => manager.first_name + ' ' + manager.last_name === selectedManager).id;
+
+                            try {
+                                // Perform the database query to insert a new role
+                                await performQuery(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ('${firstName}', '${lastName}', ${selectedRoleId}, ${selectedManagerId})`);
+                                console.log(`Added ${firstName} ${lastName} to the Database\n`);
+                                // Set addRoleFlag to false to allow further prompts
+                                addEmployeeFlag = false;
+                            } catch (error) {
+                                console.error('Error adding employee:', error);
+                            }
+                        }
                         break;
                     case 'Update Employee Role':
                         // Call a function to update an employee role
