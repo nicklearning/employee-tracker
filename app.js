@@ -140,7 +140,7 @@ async function handleUserPrompts() {
                                 {
                                     type: 'list',
                                     name: 'selectedDepartment',
-                                    message: 'What department does the role belong too?',
+                                    message: 'What department does the role belong to?',
                                     choices: departmentNames // displays only the name of the department to be selected
                                 }
                             ]);
