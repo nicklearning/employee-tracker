@@ -263,8 +263,10 @@ async function handleUserPrompts() {
                         }
                         break;
                     case 'Quit':
-                        console.log('Exiting the application');
+                        console.log('Thank you for using the application. Goodbye!');
                         keepPrompting = false;
+                        db.end();
+                        process.exit();
                         break;
                     default:
                         console.log('Invalid choice. Please try again.');
