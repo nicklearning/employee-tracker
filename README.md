@@ -35,13 +35,13 @@ To use this application:
 3) Select the prompts to modify the database as needed. 
 
 ## Screenshots
-![Menu](./imgs/menu.png)
-![View Departments and Roles](./imgs/view%20roles%20and%20departments.png)
-![View Employees](./imgs/view%20all%20employees.png)
-![Add Department](./imgs/add%20department.png)
-![Add Role](./imgs/add%20role.png)
-![Add Employee](./imgs/update%20employee%20role.png2)
-![Update Employee's Role](./imgs/update%20employee%20role.png)
+![](./imgs/menu.png)
+![](./imgs/view%20roles%20and%20departments.png)
+![](./imgs/view%20all%20employees.png)
+![](./imgs/add%20department.png)
+![](./imgs/add%20role.png)
+![](./imgs/update%20employee%20role.png2)
+![](./imgs/update%20employee%20role.png)
 
 ## Credits
 Coding assitance was given by ChatGPT
