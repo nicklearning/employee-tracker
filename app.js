@@ -15,7 +15,7 @@ const db = mysql.createConnection(
     console.log(`Connected to the employees_db database.`)
 );
 
-// Function to perform database query and return a promise
+// Function to perform database query and return a promise to handle asynchronous task of querying the database. Resolves the issue of printing the table pre-maturely.
 function performQuery(sql) {
     return new Promise((resolve, reject) => {
         db.query(sql, (err, results) => {
@@ -28,7 +28,7 @@ function performQuery(sql) {
     });
 }
 
-// Prompt for user action
+// Outer inquirer prompt to the user for their selection of the first action
 async function handleUserPrompts() {
     let keepPrompting = true;
 
@@ -92,6 +92,7 @@ async function handleUserPrompts() {
                         // Set a flag to prevent further prompting until the department is added
                         let addDepartmentFlag = true;
 
+                        // inner inquirer prompt is necessary to allow user to provide answers for this specific action
                         while (addDepartmentFlag) {
                             // Call a function to add a department
                             await inquirer.prompt({
@@ -119,8 +120,9 @@ async function handleUserPrompts() {
                         let addRoleFlag = true;
 
                         while (addRoleFlag) {
-                            // Fetch department names from the database
+                            // Fetch departments from the database so the id is included
                             const departmentChoices = await performQuery('SELECT id, name FROM department');
+                            // Map department names from department choices
                             const departmentNames = departmentChoices.map(department => department.name);
 
                             // Prompt for role details
@@ -139,13 +141,14 @@ async function handleUserPrompts() {
                                     type: 'list',
                                     name: 'selectedDepartment',
                                     message: 'What department does the role belong too?',
-                                    choices: departmentNames
+                                    choices: departmentNames // displays only the name of the department to be selected
                                 }
                             ]);
 
+                            // object destructing based on the user's answers
                             const { newRole, newRoleSalary, selectedDepartment } = roleAnswers;
 
-                            // Find the corresponding department ID based on the selected department name
+                            // Finds the corresponding department ID based on the selected department name
                             const selectedDepartmentId = departmentChoices.find(department => department.name === selectedDepartment).id;
 
                             try {
@@ -166,11 +169,11 @@ async function handleUserPrompts() {
                         while (addEmployeeFlag) {
 
                             const roleChoices = await performQuery('SELECT id, title FROM role');
-                            const roleNames = roleChoices.map(role => role.title);
+                            // create an array of role titles based on the results from the above query
+                            const roleTitles = roleChoices.map(role => role.title);
 
                             const managerChoices = await performQuery('SELECT id, first_name, last_name FROM employees');
                             const managerNames = managerChoices.map(manager => manager.first_name + ' ' + manager.last_name);
-
 
                             const employeeAnswers = await inquirer.prompt([
                                 {
@@ -187,7 +190,7 @@ async function handleUserPrompts() {
                                     type: 'list',
                                     name: 'selectedRole',
                                     message: 'What is the employee\'s role?',
-                                    choices: roleNames
+                                    choices: roleTitles
                                 },
                                 {
                                     type: 'list',
@@ -196,9 +199,8 @@ async function handleUserPrompts() {
                                     choices: managerNames
                                 }
                             ]);
-
+                            // Oject destructuring
                             const { firstName, lastName, selectedRole, selectedManager } = employeeAnswers;
-
 
                             // Find the corresponding role ID based on the selected role name
                             const selectedRoleId = roleChoices.find(role => role.title === selectedRole).id;
@@ -221,13 +223,13 @@ async function handleUserPrompts() {
                         let updateEmployeeFlag = true;
 
                         while (updateEmployeeFlag) {
-
-                            // Call a function to update an employee role
                             // Fetch employee names from the database
                             const employeeChoices = await performQuery('SELECT id, first_name, last_name FROM employees');
+                            // Map employee names based on the results of the query
                             const employeeNames = employeeChoices.map(employee => employee.first_name + ' ' + employee.last_name);
-
+                            // Fetch all role choices
                             const roleChoices = await performQuery('SELECT id, title FROM role');
+                            // Map role titles based on the above query
                             const roleTitles = roleChoices.map(role => role.title);
 
                             // Prompt for employee details
