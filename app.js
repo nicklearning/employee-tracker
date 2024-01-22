@@ -217,7 +217,50 @@ async function handleUserPrompts() {
                         }
                         break;
                     case 'Update Employee Role':
-                        // Call a function to update an employee role
+
+                        let updateEmployeeFlag = true;
+
+                        while (updateEmployeeFlag) {
+
+                            // Call a function to update an employee role
+                            // Fetch employee names from the database
+                            const employeeChoices = await performQuery('SELECT id, first_name, last_name FROM employees');
+                            const employeeNames = employeeChoices.map(employee => employee.first_name + ' ' + employee.last_name);
+
+                            const roleChoices = await performQuery('SELECT id, title FROM role');
+                            const roleTitles = roleChoices.map(role => role.title);
+
+                            // Prompt for employee details
+                            const employeeAnswers = await inquirer.prompt([
+                                {
+                                    type: 'list',
+                                    name: 'selectedEmployee',
+                                    message: 'Which employee\'s role do you want to update?',
+                                    choices: employeeNames
+                                },
+                                {
+                                    type: 'list',
+                                    name: 'selectedRole',
+                                    message: 'Which role do you want to assign to the selected employee?',
+                                    choices: roleTitles
+                                }]
+                            )
+
+                            const { selectedEmployee, selectedRole } = employeeAnswers;
+                            // Find the corresponding role ID based on the selected role name
+                            const selectedEmployeeId = employeeChoices.find(employee => employee.first_name + ' ' + employee.last_name === selectedEmployee).id;
+                            const selectedRoleID = roleChoices.find(role => role.title === selectedRole).id;
+
+                            try {
+                                // Perform the database query to update an employee's role
+                                await performQuery(`UPDATE employees SET role_id = ${selectedRoleID} WHERE id = ${selectedEmployeeId};`);
+                                console.log(`Updated employee's role\n`);
+                                // Set addRoleFlag to false to allow further prompts
+                                updateEmployeeFlag = false;
+                            } catch (error) {
+                                console.error('Error updating employee:', error);
+                            }
+                        }
                         break;
                     case 'Quit':
                         console.log('Exiting the application');
